@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/itfactory-tm/itf-steunt-je/pkg/mixer"
@@ -20,11 +21,17 @@ var encoderMutex sync.Mutex
 var encoder *mixer.Encoder
 
 func connectVoice(dg *discordgo.Session) {
+	if audioConnected {
+		// we're done here
+		return
+	}
 	audioConnected = true
 	dgv, err := dg.ChannelVoiceJoin(fnDiscord, audioChannel, false, true)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		audioConnected = false
+		// keep hitting yourself till you connect
+		connectVoice(dg)
 		return
 	}
 
