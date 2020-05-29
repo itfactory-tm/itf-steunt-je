@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"math/rand"
 	"os"
 	"os/signal"
 	"regexp"
@@ -53,7 +51,7 @@ func main() {
 	go func() {
 		for {
 			sendRandomMessage(dg)
-			time.Sleep(10 * time.Second)
+			time.Sleep(30 * time.Second)
 		}
 	}()
 	log.Println("Thomas Bot is now supporting students.  Press CTRL-C to exit.")
