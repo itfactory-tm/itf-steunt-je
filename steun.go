@@ -5,9 +5,17 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/itfactory-tm/thomas-bot/pkg/command"
 	"math/rand"
+	"sync"
+	"time"
 )
 
+const totalFiles = 14
+
+var seqMutex sync.Mutex
+var seq int
+
 func init() {
+	rand.Seed(time.Now().UnixNano())
 	registerCommand(command.Command{
 		Name:        "steun",
 		Category:    command.CategoryFun,
@@ -18,11 +26,23 @@ func init() {
 }
 
 func sendSteun(s *discordgo.Session, m *discordgo.MessageCreate) {
-	sendRandomMessage(s)
+	sendSequential(s)
 }
 
 func sendRandomMessage(s *discordgo.Session) {
 	go connectVoice(s)
-	i := rand.Intn(11)
+	i := rand.Intn(totalFiles)
 	queue(fmt.Sprintf("./audio/%02d.wav", i))
+}
+
+func sendSequential(s *discordgo.Session) {
+	go connectVoice(s)
+
+	go queue(fmt.Sprintf("./audio/%02d.wav", seq))
+	seqMutex.Lock()
+	seq++
+	if seq > totalFiles {
+		seq = 0
+	}
+	seqMutex.Unlock()
 }
