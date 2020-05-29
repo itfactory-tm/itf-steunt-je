@@ -30,6 +30,7 @@ func connectVoice(dg *discordgo.Session) {
 	if err != nil {
 		log.Println(err)
 		audioConnected = false
+		dgv.Disconnect()
 		// keep hitting yourself till you connect
 		connectVoice(dg)
 		return
