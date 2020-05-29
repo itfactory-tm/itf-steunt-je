@@ -51,10 +51,8 @@ func main() {
 	// TODO: add connection error handlers
 
 	go func() {
-		go connectVoice(dg)
 		for {
-			i := rand.Intn(11)
-			queue(fmt.Sprintf("./audio/%02d.wav", i))
+			sendRandomMessage(dg)
 			time.Sleep(10 * time.Second)
 		}
 	}()
