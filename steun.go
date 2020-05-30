@@ -17,7 +17,7 @@ var seq int
 func init() {
 	rand.Seed(time.Now().UnixNano())
 	registerCommand(command.Command{
-		Name:        "steun",
+		Name:        "shout",
 		Category:    command.CategoryFun,
 		Description: "",
 		Hidden:      false,
