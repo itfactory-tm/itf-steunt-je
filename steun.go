@@ -16,6 +16,9 @@ const totalFiles = 51
 var seqMutex sync.Mutex
 var seq int
 
+var hadRandomMutex sync.Mutex
+var hadRandom = map[int]struct{}{}
+
 func init() {
 	rand.Seed(time.Now().UnixNano())
 	registerCommand(command.Command{
@@ -50,7 +53,27 @@ func sendSteun(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func sendRandomMessage(s *discordgo.Session) {
 	go connectVoice(s)
-	i := rand.Intn(totalFiles)
+	var i int
+
+	hadRandomMutex.Lock()
+	if (len(hadRandom)) >= totalFiles {
+		// reset counter
+		hadRandom = map[int]struct{}{}
+	}
+	try := 0
+	for {
+		i = rand.Intn(totalFiles)
+		if _, exists := hadRandom[i]; !exists {
+			hadRandom[i] = struct{}{}
+			break
+		}
+		try++
+		if try > 500 {
+			// give up
+			break
+		}
+	}
+	hadRandomMutex.Unlock()
 	queue(fmt.Sprintf("./audio/%02d.wav", i))
 }
 
