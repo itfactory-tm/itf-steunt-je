@@ -5,6 +5,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/itfactory-tm/thomas-bot/pkg/command"
 	"math/rand"
+	"regexp"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -25,7 +27,17 @@ func init() {
 	})
 }
 
+var numRegex = regexp.MustCompile(`^tm!shout ([0-9]*)$`)
+
 func sendSteun(s *discordgo.Session, m *discordgo.MessageCreate) {
+	matches := numRegex.FindAllStringSubmatch(m.Message.Content, -1)
+	if len(matches) > 0 && len(matches[0]) > 1 {
+		i, err := strconv.ParseInt(matches[0][1], 10, 64)
+		if err != nil {
+			go queue(fmt.Sprintf("./audio/%02d.wav", i))
+			return
+		}
+	}
 	sendSequential(s)
 }
 
