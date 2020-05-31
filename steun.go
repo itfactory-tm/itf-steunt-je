@@ -25,6 +25,13 @@ func init() {
 		Hidden:      false,
 		Handler:     sendSteun,
 	})
+	registerCommand(command.Command{
+		Name:        "shoutxl",
+		Category:    command.CategoryFun,
+		Description: "",
+		Hidden:      false,
+		Handler:     sendSteunXL,
+	})
 }
 
 var numRegex = regexp.MustCompile(`^tm!shout ([0-9]*)$`)
@@ -57,4 +64,20 @@ func sendSequential(s *discordgo.Session) {
 		seq = 0
 	}
 	seqMutex.Unlock()
+}
+
+func sendSteunXL(s *discordgo.Session, m *discordgo.MessageCreate) {
+	randNrs := map[int]struct{}{}
+	for {
+		i := rand.Intn(totalFiles)
+		if _, exists := randNrs[i]; !exists {
+			randNrs[i] = struct{}{}
+		}
+		if len(randNrs) >= 10 {
+			break
+		}
+	}
+	for i := range randNrs {
+		go queue(fmt.Sprintf("./audio/%02d.wav", i))
+	}
 }
