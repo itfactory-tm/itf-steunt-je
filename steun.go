@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-const totalFiles = 92
+const totalFiles = 93
 
 var seqMutex sync.Mutex
 var seq int
