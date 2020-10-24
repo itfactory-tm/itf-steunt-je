@@ -36,10 +36,10 @@ func init() {
 	})
 }
 
-var numRegex = regexp.MustCompile(`^tm!shout ([0-9]*)$`)
+var shoutRegex = regexp.MustCompile(`^tm!shout (.*)$`)
 
 func sendSteun(s *discordgo.Session, m *discordgo.MessageCreate) {
-	matches := numRegex.FindAllStringSubmatch(m.Message.Content, -1)
+	matches := shoutRegex.FindAllStringSubmatch(m.Message.Content, -1)
 	if len(matches) > 0 && len(matches[0]) > 1 {
 		go queue(fmt.Sprintf("./audio/%s.wav", matches[0][1]))
 		return
