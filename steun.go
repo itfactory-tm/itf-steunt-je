@@ -8,7 +8,6 @@ import (
 	"log"
 	"math/rand"
 	"regexp"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -42,11 +41,8 @@ var numRegex = regexp.MustCompile(`^tm!shout ([0-9]*)$`)
 func sendSteun(s *discordgo.Session, m *discordgo.MessageCreate) {
 	matches := numRegex.FindAllStringSubmatch(m.Message.Content, -1)
 	if len(matches) > 0 && len(matches[0]) > 1 {
-		i, err := strconv.ParseInt(matches[0][1], 10, 64)
-		if err == nil {
-			go queue(fmt.Sprintf("./audio/%02d.wav", i))
-			return
-		}
+		go queue(fmt.Sprintf("./audio/%s.wav", matches[0][1]))
+		return
 	}
 	sendSequential(s)
 }
