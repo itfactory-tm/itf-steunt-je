@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"sync"
+	"time"
 
 	"github.com/itfactory-tm/itf-steunt-je/pkg/mixer"
 
@@ -53,6 +55,23 @@ func connectVoice(dg *discordgo.Session) {
 				// i++
 			case <-doneChan:
 				return
+			}
+		}
+	}()
+
+	go func() {
+		failCount := 0
+		for {
+			time.Sleep(5 * time.Second)
+			if !dgv.Ready {
+				failCount++
+			} else {
+				failCount = 0
+			}
+
+			if failCount > 5 {
+				log.Println("Connection check failed 5 times")
+				os.Exit(1)
 			}
 		}
 	}()
