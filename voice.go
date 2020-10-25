@@ -51,6 +51,7 @@ func connectVoice(dg *discordgo.Session) {
 			select {
 			case f := <-voiceQueueChan:
 				fmt.Println(f)
+				dg.UpdateStreamingStatus(0, f, "")
 				go encoder.Queue(uint64(i), f)
 				// i++
 			case <-doneChan:
